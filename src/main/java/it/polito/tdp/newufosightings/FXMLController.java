@@ -1,6 +1,8 @@
 package it.polito.tdp.newufosightings;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import it.polito.tdp.newufosightings.model.Model;
@@ -33,7 +35,7 @@ public class FXMLController {
     private Button btnSelezionaAnno;
 
     @FXML
-    private ComboBox<?> cmbBoxForma;
+    private ComboBox<String> cmbBoxForma;
 
     @FXML
     private Button btnCreaGrafo;
@@ -49,12 +51,50 @@ public class FXMLController {
 
     @FXML
     void doCreaGrafo(ActionEvent event) {
+    	
+    	txtResult.clear();
+    	
+    		String a = txtAnno.getText();
+    		Integer anno = Integer.parseInt(a);
 
+    		String forma = cmbBoxForma.getValue();
+    		
+    		if (forma == null) {
+    			txtResult.appendText("Selezionare una forma!\n");
+    		}
+    		
+    		this.model.creaGrafo(anno, forma);
+    		
+    		txtResult.appendText("GRAFO CREATO!\n");
+    		txtResult.appendText("#VERTICI: "+this.model.nVertici()+"\n");
+    		txtResult.appendText("#ARCHI: "+this.model.nArchi()+"\n");
+
+    		
+    	
     }
 
     @FXML
     void doSelezionaAnno(ActionEvent event) {
-
+    	
+    	txtResult.clear();
+    	
+    	try {
+    		String a = txtAnno.getText();
+    		Integer anno = Integer.parseInt(a);
+    		
+    		cmbBoxForma.getItems().clear();
+    		cmbBoxForma.getItems().addAll(this.model.getForme(anno));
+    		
+    		if (anno <1910 || anno > 2014) {
+    			txtResult.appendText("Inserire un anno compreso tra il 1910 e il 2014! \n");
+    			return ;
+    		}
+    		
+    	} catch (NumberFormatException e) {
+    		txtResult.appendText("Inserire un anno nel formato valido! ");
+    	}
+    	
+    	
     }
 
     @FXML
