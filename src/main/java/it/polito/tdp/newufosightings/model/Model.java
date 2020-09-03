@@ -57,5 +57,9 @@ public class Model {
 	public int nArchi() {
 		return this.grafo.edgeSet().size();
 	}
+	
+	public List <Arco> getConnessione() {
+		return archi;
+	}
 
 }

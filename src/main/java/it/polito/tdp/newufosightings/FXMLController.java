@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import it.polito.tdp.newufosightings.model.Arco;
 import it.polito.tdp.newufosightings.model.Model;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -67,9 +68,15 @@ public class FXMLController {
     		
     		txtResult.appendText("GRAFO CREATO!\n");
     		txtResult.appendText("#VERTICI: "+this.model.nVertici()+"\n");
-    		txtResult.appendText("#ARCHI: "+this.model.nArchi()+"\n");
+    		txtResult.appendText("#ARCHI: "+this.model.nArchi()+"\n\n\n");
 
     		
+    		List <Arco> connessione = this.model.getConnessione();
+        	
+    		for (Arco v : connessione) {    			
+    			txtResult.appendText(v.getS2()+" | "+v.getPeso()+"\n"); 
+    		}
+
     	
     }
 

@@ -100,13 +100,13 @@ public class NewUfoSightingsDAO {
 	}
 	
 	public List <Arco> getArchi(String forma, Integer anno, Map<String, State> idMap) {
-		String sql = "SELECT n.state1 AS s1, n.state2 AS s2 , COUNT(DISTINCT(si1.id)) AS peso " + 
+		String sql = "SELECT n.state1 AS s1, n.state2 AS s2 , COUNT(DISTINCT(si1.id)) + COUNT(DISTINCT(si2.id)) AS peso " + 
 				"FROM neighbor n, state s1, state s2, sighting si1, sighting si2 " + 
 				"WHERE n.state1 = s1.id " + 
 				"AND n.state2 = s2.id " + 
+				"AND n.state1 > n.state2 " + 
 				"AND si1.state = s1.id " + 
 				"AND si2.state = s2.id " + 
-				"AND si1.id = si2.id " + 
 				"AND si1.shape = ? " + 
 				"AND si2.shape = ? " + 
 				"AND YEAR(si1.datetime) = ? " + 
