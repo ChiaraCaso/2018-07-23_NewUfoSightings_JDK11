@@ -19,21 +19,31 @@ public class Model {
 	Graph<State, DefaultWeightedEdge> grafo;
 	Map <String, State> idMap;
 	List<State> vertici ;
+	List <Arco> archi;
 	
 	public Model () {
 		dao = new NewUfoSightingsDAO();
 		this.grafo = new SimpleWeightedGraph<State, DefaultWeightedEdge>(DefaultWeightedEdge.class);
 		this.idMap = new HashMap<String, State>();
 		this.vertici = new ArrayList<State>();
+		this.archi = new ArrayList<Arco>();
 	}
 	
 	public void creaGrafo (Integer anno, String forma) {
 		
 		dao.loadAllStates(idMap);
 		
-		this.vertici = dao.getStati(anno, forma, idMap);
+		this.vertici = dao.loadAllStates(idMap);
 		
 		Graphs.addAllVertices(this.grafo, vertici);
+		
+		this.archi = dao.getArchi(forma, anno, idMap);
+		
+		for (Arco a : archi) {
+			if (this.grafo.containsVertex(a.getS1()) && this.grafo.containsVertex(a.getS2())) {
+				Graphs.addEdgeWithVertices(this.grafo, a.getS1(), a.getS2(), a.getPeso());
+			}
+		}
 	}
 	
 	public List <String> getForme (Integer anno) {

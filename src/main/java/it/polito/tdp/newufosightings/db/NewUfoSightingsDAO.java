@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import it.polito.tdp.newufosightings.model.Arco;
 import it.polito.tdp.newufosightings.model.Sighting;
 import it.polito.tdp.newufosightings.model.State;
 
@@ -98,24 +99,38 @@ public class NewUfoSightingsDAO {
 		}
 	}
 	
-	public List <State> getStati (Integer anno, String forma, Map<String, State> idMap) {
-		String sql = "SELECT s.id AS id " + 
-				"FROM state s, sighting si " + 
-				"WHERE s.id = si.state " + 
-				"AND si.shape = ? " + 
-				"AND year(DATETIME) = ? ";
+	public List <Arco> getArchi(String forma, Integer anno, Map<String, State> idMap) {
+		String sql = "SELECT n.state1 AS s1, n.state2 AS s2 , COUNT(DISTINCT(si1.id)) AS peso " + 
+				"FROM neighbor n, state s1, state s2, sighting si1, sighting si2 " + 
+				"WHERE n.state1 = s1.id " + 
+				"AND n.state2 = s2.id " + 
+				"AND si1.state = s1.id " + 
+				"AND si2.state = s2.id " + 
+				"AND si1.id = si2.id " + 
+				"AND si1.shape = ? " + 
+				"AND si2.shape = ? " + 
+				"AND YEAR(si1.datetime) = ? " + 
+				"AND YEAR(si2.datetime) = ? " + 
+				"GROUP BY s1, s2 ";
 		
-		List <State> result = new ArrayList<State>();
+		List <Arco> result = new ArrayList<Arco>();
 		
 		try {
 			Connection conn = DBConnect.getConnection();
 			PreparedStatement st = conn.prepareStatement(sql);
 			st.setString(1, forma);
-			st.setInt(2, anno);
+			st.setString(2, forma);
+			st.setInt(3, anno);
+			st.setInt(4, anno);
 			ResultSet res = st.executeQuery();
 			
 			while (res.next()) {
-				result.add(idMap.get(res.getString("id")));
+				State s1 = idMap.get(res.getString("s1"));
+				State s2 = idMap.get(res.getString("s2"));
+				
+				if (s1 != null && s2 != null) {
+					result.add(new Arco(s1, s2, res.getInt("peso")));
+				}
 			}
 			
 			conn.close();
